@@ -9,7 +9,7 @@ on:
       - lib/**
       - pubspec.yaml
       - pubspec.lock
-      - .github/workflows/flutter-android.yml
+      - .github/workflows/android.yml
 
 jobs:
   build-android-debug:

@@ -4,7 +4,7 @@
 <dict>
   <!-- Distribution Type -->
   <key>method</key>
-  <string>ad-hoc</string>
+  <string>app-store</string>
 
   <!-- Apple Developer Team ID -->
   <key>teamID</key>
@@ -23,11 +23,11 @@
   <dict>
     <!-- Main iOS App Target -->
     <key>com.notifyvisitors.nvflutter-sdk-test-app</key>
-    <string>nvFlutterSDKTestAppMainTargetAdHocDistribProfile</string>
+    <string>nvFlutterSDKTestAppMainTargetReleaseDistribProfile</string>
 
     <!-- (Optional) Push Notification Extension Target -->
     <key>com.notifyvisitors.nvflutter-sdk-test-app.NotificationServiceExt</key>
-    <string>nvFlutterSDKTestAppServExtTargetAdHocDistribProfil</string>
+    <string>nvFlutterSDKTestAppServicExtTargetReleaseDistProfi</string>
   </dict>
 
   <!-- Don't include bitcode for faster build -->

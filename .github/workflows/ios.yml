@@ -8,7 +8,7 @@ on:
       - "lib/**"
       - "pubspec.yaml"
       - "pubspec.lock"
-      - ".github/workflows/flutter-ios.yml"
+      - ".github/workflows/ios.yml"
 
 jobs:
   build-ios:
@@ -67,7 +67,7 @@ jobs:
           CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
         run: |
           mkdir -p ios/certs
-          for FILE in appleDistribution.p12 nvFlutterTestApp_Main_Target_AdHoc.mobileprovision nvFlutterTestApp_Ext_Target_AdHoc.mobileprovision; do
+          for FILE in appleDistribution.p12 nvFlutterTestApp_Main_Target_Release.mobileprovision nvFlutterTestApp_Ext_Target_Release.mobileprovision; do  
             echo "🔓 Decrypting $FILE..."
             openssl aes-256-cbc -k "$CERT_PASSWORD" \
               -in "pf_ios/${FILE}.enc" -out "ios/certs/${FILE}" -d
