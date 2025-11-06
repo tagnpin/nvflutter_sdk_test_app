@@ -1,4 +1,4 @@
-name: 🚀 Flutter CI - iOS AdHoc (Professional & Stable)
+name: 🚀 Flutter CI - iOS Release (Professional & Stable)
 
 on:
   push:
