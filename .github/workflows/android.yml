@@ -81,7 +81,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           APK_PATH: build/app/outputs/flutter-apk/app-debug.apk
-          S3_DESTINATION: builds/app-debug-${{ github.run_number }}.apk
+          S3_DESTINATION: ${{ github.event.repository.name }}/app-debug-${{ github.run_number }}.apk
         run: |
           echo "🔄 Checking APK file before S3 upload..."
           if [ ! -f "$APK_PATH" ]; then
