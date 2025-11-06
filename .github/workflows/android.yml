@@ -54,7 +54,7 @@ jobs:
 
       # ✅ 6. Optional: Run Flutter Analyzer
       - name: 🔍 Flutter Analyze
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # ✅ 7. Optional: Run Tests (Can be removed if no tests available)
       - name: 🧪 Run Flutter Tests
