@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "534299683668",
+    "project_id": "nv-ir-flutter-test-apps",
+    "storage_bucket": "nv-ir-flutter-test-apps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534299683668:android:e3282357f4f853daa5b6c1",
+        "android_client_info": {
+          "package_name": "com.notifyvisitors.nvflutter_sdk_test_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiLL34bvgZqAqxDyYkEqu76et3aRn2IDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,50 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_notifyvisitors (1.4.0):
+    - Flutter
+    - notifyvisitors (= 7.3.2)
+    - notifyvisitorsNudges (= 0.0.1)
+  - fluttertoast (0.0.2):
+    - Flutter
+  - notifyvisitors (7.3.2)
+  - notifyvisitorsNotificationService (1.0.0)
+  - notifyvisitorsNudges (0.0.1)
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_notifyvisitors (from `.symlinks/plugins/flutter_notifyvisitors/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - notifyvisitorsNotificationService
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - notifyvisitors
+    - notifyvisitorsNotificationService
+    - notifyvisitorsNudges
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_notifyvisitors:
+    :path: ".symlinks/plugins/flutter_notifyvisitors/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_notifyvisitors: c0a376aef2b3ccd014f2b7f34dba082bfb534bc7
+  fluttertoast: 2c67e14dce98bbdb200df9e1acf610d7a6264ea1
+  notifyvisitors: 2bb0575c0da9e68ff40eeac0264142ad60ac3de4
+  notifyvisitorsNotificationService: ef0ac1d14d3c3b168eec98d9aa1bff14f592e6a2
+  notifyvisitorsNudges: 8a0345a8268247f37b17f9d8d77491590cb1497a
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+
+PODFILE CHECKSUM: 2d530975c497475085de6be9230101c6f03e14f4
+
+COCOAPODS: 1.16.2

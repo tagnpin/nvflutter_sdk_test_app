@@ -1,0 +1,25 @@
+name: flutter_notifyvisitors
+description: NotifyVisitors sdk to attribute and analyse user behaviour analytics like funnel, cohort, RFM also used to increase Mobile App engagement through push notification, in-app nudges.
+version: 1.4.0
+homepage: https://github.com/tagnpin/flutter-notifyvisitors
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flutter.notifyvisitors
+        pluginClass: NotifyvisitorsPlugin
+      ios:
+        pluginClass: NotifyvisitorsPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+environment:
+  sdk: ">=2.12.0 <4.0.0"
+  flutter: ">=1.20.0"

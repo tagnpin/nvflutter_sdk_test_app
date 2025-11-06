@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Distribution Type -->
+  <key>method</key>
+  <string>ad-hoc</string>
+
+  <!-- Apple Developer Team ID -->
+  <key>teamID</key>
+  <string>4JW4924F8P</string>
+
+  <!-- Manual signing (we provide profiles & certs manually in CI) -->
+  <key>signingStyle</key>
+  <string>manual</string>
+
+  <!-- Certificate from Keychain -->
+  <key>signingCertificate</key>
+  <string>Apple Distribution</string>
+
+  <!-- Bundle Identifier + Provisioning Profile Names -->
+  <key>provisioningProfiles</key>
+  <dict>
+    <!-- Main iOS App Target -->
+    <key>com.notifyvisitors.nvflutter-sdk-test-app</key>
+    <string>nvFlutterSDKTestAppMainTargetAdHocDistribProfile</string>
+
+    <!-- (Optional) Push Notification Extension Target -->
+    <key>com.notifyvisitors.nvflutter-sdk-test-app.NotificationServiceExt</key>
+    <string>nvFlutterSDKTestAppServExtTargetAdHocDistribProfil</string>
+  </dict>
+
+  <!-- Don't include bitcode for faster build -->
+  <key>compileBitcode</key>
+  <false/>
+
+  <!-- Strip Swift debug symbols -->
+  <key>stripSwiftSymbols</key>
+  <true/>
+
+  <!-- Export IPA to folder -->
+  <key>destination</key>
+  <string>export</string>
+</dict>
+</plist>

@@ -1,0 +1,74 @@
+name: 🚀 Flutter CI – Android Debug Build
+
+# ✅ Trigger workflow on changes to Flutter/Android-related files
+on:
+  push:
+    branches: [ stage ]
+    paths:
+      - android/**
+      - lib/**
+      - pubspec.yaml
+      - pubspec.lock
+      - .github/workflows/flutter-android.yml
+
+jobs:
+  build-android-debug:
+    name: 🛠️ Build Flutter Android Debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # 📁 1. Checkout Source Code
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      # ☕ 2. Setup Java Development Kit (Required for Gradle & Android)
+      - name: ⚙️ Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 🐦 3. Setup Flutter SDK
+      - name: 🧰 Install Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: stable
+          cache: true   # ✅ Built-in caching for Flutter SDK & pub dependencies
+
+      # 📦 4. Restore Gradle Build Cache
+      - name: ♻️ Cache Gradle Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 📦 5. Install Flutter Dependencies
+      - name: 📦 Install Flutter Dependencies (pub get)
+        run: flutter pub get
+
+      # ✅ 6. Optional: Run Flutter Analyzer
+      - name: 🔍 Flutter Analyze
+        run: flutter analyze
+
+      # ✅ 7. Optional: Run Tests (Can be removed if no tests available)
+      - name: 🧪 Run Flutter Tests
+        run: flutter test
+        continue-on-error: true  # Keeps workflow running even if tests fail
+
+      # 🏗️ 8. Build Android Debug APK
+      - name: 🏗️ Build Debug APK
+        run: flutter build apk --debug --no-tree-shake-icons
+
+      # 📤 9. Upload APK as Artifact
+      - name: 📤 Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+

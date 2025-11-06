@@ -1,0 +1,58 @@
+group 'com.flutter.notifyvisitors'
+version '1.1.4'
+
+buildscript {
+    ext.kotlin_version = '1.8.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2'
+        //classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath 'com.google.gms:google-services:4.4.3'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 35
+    namespace = "com.flutter.notifyvisitors"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdk = 35
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation ('com.google.firebase:firebase-messaging')
+    implementation('com.notifyvisitors.notifyvisitors:notifyvisitors:v5.5.4')
+    implementation("com.notifyvisitors.nudges:notifyvisitors-nudges:v0.0.3")
+    implementation('androidx.localbroadcastmanager:localbroadcastmanager:1.1.0')
+}
