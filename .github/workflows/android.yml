@@ -72,3 +72,28 @@ jobs:
           name: flutter-android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
 
+      # ☁️ 10. Upload APK to AWS S3 (Professional + Safe)
+      - name: ☁️ Upload Debug APK to S3
+        if: success()   # Only run if previous steps succeeded
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          APK_PATH: build/app/outputs/flutter-apk/app-debug.apk
+          S3_DESTINATION: builds/app-debug-${{ github.run_number }}.apk
+        run: |
+          echo "🔄 Checking APK file before S3 upload..."
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ APK not found at $APK_PATH"
+            exit 1
+          fi
+
+          echo "✅ Uploading to S3 bucket: $S3_BUCKET"
+          aws s3 cp "$APK_PATH" "s3://$S3_BUCKET/$S3_DESTINATION" --acl public-read
+
+          APK_URL="https://$S3_BUCKET.s3.${{ secrets.AWS_REGION }}.amazonaws.com/$S3_DESTINATION"
+          echo "✅ Upload successful!"
+          echo "📎 APK Download URL: $APK_URL"
+          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+
