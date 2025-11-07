@@ -25,7 +25,7 @@ jobs:
       # App Store Connect API (set in GitHub Secrets)
       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+      APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
 
     steps:
       # ----------------------------------------
@@ -173,7 +173,7 @@ jobs:
           echo "🔑 Generating Fastlane API key JSON..."
           
           # Decode base64 to P8
-          echo "$APP_STORE_CONNECT_API_KEY" | base64 --decode > AuthKey.p8
+          echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
         
           # Convert P8 -> one-line JSON-safe string
           KEY_CONTENT=$(tr -d '\n' < AuthKey.p8 | sed 's/"/\\"/g')
