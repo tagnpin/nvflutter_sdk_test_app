@@ -173,15 +173,25 @@ jobs:
           echo "🔑 Generating Fastlane API key JSON..."
           echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
 
-          cat <<EOF > fastlane_api_key.json
-          {
-            "key_id": "${APP_STORE_CONNECT_API_KEY_ID}",
-            "issuer_id": "${APP_STORE_CONNECT_ISSUER_ID}",
-            "key": "$(awk '{printf "%s", $0}' AuthKey.p8 | sed 's/"/\\"/g')",
-            "in_house": false
-          }
-          EOF
+          # Create a valid JSON file for Fastlane
+            awk '{printf "%s", $0}' AuthKey.p8 > key.txt
+            KEY_CONTENT=$(cat key.txt | sed 's/"/\\"/g')
+       
+            cat > fastlane_api_key.json <<EOF
+            {
+              "key_id": "${APP_STORE_CONNECT_API_KEY_ID}",
+              "issuer_id": "${APP_STORE_CONNECT_ISSUER_ID}",
+              "key": "${KEY_CONTENT}",
+              "in_house": false
+            }
+            EOF
 
+            echo "✅ fastlane_api_key.json created"
+            cat fastlane_api_key.json | head -10
+
+            
+
+          
           echo "📤 Uploading to TestFlight..."
           sudo gem install fastlane --no-document
           fastlane deliver \
