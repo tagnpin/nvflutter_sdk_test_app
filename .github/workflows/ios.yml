@@ -162,7 +162,12 @@ jobs:
             -allowProvisioningUpdates | tee export.log
 
           ls -la build/*.ipa || echo "❌ IPA not generated!"
-          cd ..
+
+          # Store dynamic IPA path (safe even if name changes)
+          IPA_PATH=$(find build -maxdepth 1 -name "*.ipa" | head -n 1)
+          echo "✅ Found IPA at: $IPA_PATH"
+
+          # cd ..
 
       # ----------------------------------------
       # 12. Upload to TestFlight via Fastlane
@@ -181,10 +186,12 @@ jobs:
           sudo gem install fastlane --no-document
           fastlane deliver \
             --api_key_path fastlane_api_key.json \
-            --ipa ios/build/Runner.ipa \
+            --ipa "$IPA_PATH" \
             --skip_screenshots \
             --skip_metadata \
             --force
+            
+          cd ..
 
 
       # ----------------------------------------
