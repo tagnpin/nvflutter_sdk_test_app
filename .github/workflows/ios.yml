@@ -182,9 +182,9 @@ jobs:
           fastlane deliver \
             --api_key_path fastlane_api_key.json \
             --ipa ios/build/Runner.ipa \
-            --skip_waiting_for_build_processing true \
             --skip_screenshots \
-            --skip_metadata
+            --skip_metadata \
+            --force
 
 
       # ----------------------------------------
