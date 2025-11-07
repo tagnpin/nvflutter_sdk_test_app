@@ -177,7 +177,7 @@ jobs:
           {
             "key_id": "${APP_STORE_CONNECT_API_KEY_ID}",
             "issuer_id": "${APP_STORE_CONNECT_ISSUER_ID}",
-            "key": "$(awk '{printf "%s\\n", $0}' AuthKey.p8)",
+            "key": "$(awk '{printf "%s", $0}' AuthKey.p8 | sed 's/"/\\"/g')",
             "in_house": false
           }
           EOF
