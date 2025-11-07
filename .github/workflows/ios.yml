@@ -168,15 +168,14 @@ jobs:
       # ----------------------------------------
       # 12. Upload to TestFlight via Fastlane
       # ----------------------------------------
-      - name: ☁️ Upload to TestFlight using Fastlane Deliver
+      - name: Upload to TestFlight via Fastlane
         run: |
           echo "🔑 Generating Fastlane API key JSON..."
-          
-          # Decode base64 to P8
+      
           echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
-        
-          # Convert P8 -> one-line JSON-safe string
-          KEY_CONTENT=$(tr -d '\n' < AuthKey.p8 | sed 's/"/\\"/g')
+      
+          # keep newlines and escape for JSON
+          KEY_CONTENT=$(awk '{printf "%s\\n", $0}' AuthKey.p8 | sed 's/"/\\"/g')
       
           cat > fastlane_api_key.json <<EOF
           {
@@ -186,18 +185,20 @@ jobs:
             "in_house": false
           }
           EOF
-        
+      
           echo "✅ fastlane_api_key.json created"
-          cat fastlane_api_key.json | head -15
-          
+          cat fastlane_api_key.json | head -10
+      
           echo "📤 Uploading to TestFlight..."
           sudo gem install fastlane --no-document
+      
           fastlane deliver \
             --api_key_path fastlane_api_key.json \
             --ipa ios/build/nvflutter_sdk_test_app.ipa \
             --skip_screenshots \
             --skip_metadata \
             --force
+
             
           cd ..
       # ----------------------------------------
