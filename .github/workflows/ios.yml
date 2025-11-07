@@ -166,6 +166,7 @@ jobs:
           # Store dynamic IPA path (safe even if name changes)
           IPA_PATH=$(find build -maxdepth 1 -name "*.ipa" | head -n 1)
           echo "✅ Found IPA at: $IPA_PATH"
+          echo "IPA_PATH=$IPA_PATH" >> $GITHUB_ENV
 
           # cd ..
 
@@ -190,7 +191,7 @@ jobs:
             --skip_screenshots \
             --skip_metadata \
             --force
-            
+
           cd ..
 
 
