@@ -1,4 +1,4 @@
-name: 🚀 Flutter CI - iOS Release (Professional & Stable)
+name: 🚀 Flutter CI – iOS Release (Enterprise & Production Ready)
 
 on:
   push:
@@ -11,201 +11,186 @@ on:
       - ".github/workflows/ios.yml"
 
 jobs:
-  build-ios:
+  ios-build-release:
+    name: 📱 Build & Upload iOS App (TestFlight)
     runs-on: macos-latest
-    timeout-minutes: 50
+    timeout-minutes: 45
 
+    # -------------------------------------------------
+    # Global Environment Setup
+    # -------------------------------------------------
     env:
-      APP_SCHEME: Runner
-      WORKSPACE: Runner.xcworkspace
-      CONFIGURATION: Release
-      DEVELOPMENT_TEAM: 4JW4924F8P     # ⚠️ Update if needed
-      KEYCHAIN_NAME: build.keychain
+      APP_SCHEME: "Runner"
+      WORKSPACE: "Runner.xcworkspace"
+      CONFIGURATION: "Release"
+      DEVELOPMENT_TEAM: "4JW4924F8P"
+      KEYCHAIN_NAME: "build.keychain-db"
 
-      # App Store Connect API (set in GitHub Secrets)
+      # App Store Connect API Keys (from GitHub Secrets)
       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
       APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
 
     steps:
-      # ----------------------------------------
-      # 1. Source Checkout
-      # ----------------------------------------
-      - name: 📁 Checkout Source Code
-        uses: actions/checkout@v4
+    # -------------------------------------------------
+    # 1. Checkout Project Source
+    # -------------------------------------------------
+    - name: 📁 Checkout Source Code
+      uses: actions/checkout@v4
 
-      # ----------------------------------------
-      # 2. Setup Flutter
-      # ----------------------------------------
-      - name: 🛠 Setup Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.35.7"
-          channel: stable
+    # -------------------------------------------------
+    # 2. Install Flutter SDK
+    # -------------------------------------------------
+    - name: 🛠 Install Flutter SDK
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.35.7"
+        channel: stable
 
-      # ----------------------------------------
-      # 3. Cache Flutter Dependencies
-      # ----------------------------------------
-      - name: 💾 Cache Pub Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+    # -------------------------------------------------
+    # 3. Cache Flutter Packages
+    # -------------------------------------------------
+    - name: 💾 Cache Flutter Pub Packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.pub-cache
+        key: pub-cache-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
 
-      - name: 📦 Flutter Pub Get
-        run: flutter pub get
+    - name: 📦 Flutter Pub Get
+      run: flutter pub get
 
-      # ----------------------------------------
-      # 4. CocoaPods Setup
-      # ----------------------------------------
-      - name: 📚 Install CocoaPods Dependencies
-        run: |
-          cd ios
-          pod install --repo-update
-          cd ..
+    # -------------------------------------------------
+    # 4. Install iOS Dependencies (CocoaPods)
+    # -------------------------------------------------
+    - name: 📚 Install CocoaPods Dependencies
+      run: |
+        cd ios
+        pod install --repo-update
 
-      # ----------------------------------------
-      # 5. Decrypt Signing Assets
-      # ----------------------------------------
-      - name: 🔐 Decrypt Certificates & Provisioning Profiles
-        env:
-          CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
-        run: |
-          mkdir -p ios/certs
-          for FILE in appleDistribution.p12 nvFlutterTestApp_Main_Target_Release.mobileprovision nvFlutterTestApp_Ext_Target_Release.mobileprovision; do  
-            echo "🔓 Decrypting $FILE..."
-            openssl aes-256-cbc -k "$CERT_PASSWORD" \
-              -in "pf_ios/${FILE}.enc" -out "ios/certs/${FILE}" -d
-          done
+    # -------------------------------------------------
+    # 5. Auto-Increment Build Number
+    # -------------------------------------------------
+    - name: 🔢 Auto-Increment iOS Build Number
+      run: |
+        BUILD_NUMBER="${{ github.run_number }}"
+        echo "Using CFBundleVersion: $BUILD_NUMBER"
+        plutil -replace CFBundleVersion -string "$BUILD_NUMBER" ios/Runner/Info.plist
 
-      # ----------------------------------------
-      # 6. Setup Keychain & Import Certificate
-      # ----------------------------------------
-      - name: 🔑 Setup Keychain & Import Certificate
-        env:
-          CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
-        run: |
-          security create-keychain -p "$CERT_PASSWORD" "$KEYCHAIN_NAME"
-          security default-keychain -s "$KEYCHAIN_NAME"
-          security unlock-keychain -p "$CERT_PASSWORD" "$KEYCHAIN_NAME"
-          security import ios/certs/appleDistribution.p12 -k "$KEYCHAIN_NAME" -P "$CERT_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$CERT_PASSWORD" "$KEYCHAIN_NAME"
-          echo "🔐 Keychain configured successfully."
+    # -------------------------------------------------
+    # 6. Decrypt Signing Certificates & Profiles
+    # -------------------------------------------------
+    - name: 🔐 Decrypt Certificates & Provisioning Profiles
+      env:
+        CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
+      run: |
+        mkdir -p ios/certs
+        for FILE in appleDistribution.p12 nvFlutterTestApp_Main_Target_Release.mobileprovision nvFlutterTestApp_Ext_Target_Release.mobileprovision; do
+          openssl aes-256-cbc -k "$CERT_PASSWORD" -in "pf_ios/${FILE}.enc" -out "ios/certs/${FILE}" -d
+        done
 
-      # ----------------------------------------
-      # 7. Install Provisioning Profiles
-      # ----------------------------------------
-      - name: 📝 Install Provisioning Profiles
-        run: |
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp ios/certs/*.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-          echo "✅ Installed Provisioning Profiles:"
-          ls -la ~/Library/MobileDevice/Provisioning\ Profiles || true
+    # -------------------------------------------------
+    # 7. Configure macOS Keychain for Code Signing
+    # -------------------------------------------------
+    - name: 🔑 Setup macOS Keychain & Import Certificates
+      env:
+        CERT_PASSWORD: ${{ secrets.CERT_PASSWORD }}
+      run: |
+        security create-keychain -p "$CERT_PASSWORD" "$KEYCHAIN_NAME"
+        security default-keychain -s "$KEYCHAIN_NAME"
+        security unlock-keychain -p "$CERT_PASSWORD" "$KEYCHAIN_NAME"
+        security import ios/certs/appleDistribution.p12 -k "$KEYCHAIN_NAME" -P "$CERT_PASSWORD" -T /usr/bin/codesign
+        security set-key-partition-list -S apple-tool:,apple: -s -k "$CERT_PASSWORD" "$KEYCHAIN_NAME"
 
-      # ----------------------------------------
-      # 8. Fix Pod Signing Conflicts
-      # ----------------------------------------
-      - name: 🛠 Fix Pod Signing (Prevent Build Conflicts)
-        run: |
-          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = .*;/PROVISIONING_PROFILE_SPECIFIER = "";/g' ios/Pods/Pods.xcodeproj/project.pbxproj || true
-          sed -i '' 's/PROVISIONING_PROFILE = .*;/PROVISIONING_PROFILE = "";/g' ios/Pods/Pods.xcodeproj/project.pbxproj || true
-          sed -i '' 's/CODE_SIGN_STYLE = Manual;/CODE_SIGN_STYLE = Automatic;/g' ios/Pods/Pods.xcodeproj/project.pbxproj || true
-          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Distribution";/CODE_SIGN_IDENTITY = "";/g' ios/Pods/Pods.xcodeproj/project.pbxproj || true
+    # -------------------------------------------------
+    # 8. Install Provisioning Profiles
+    # -------------------------------------------------
+    - name: 📝 Install Provisioning Profiles
+      run: |
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        cp ios/certs/*.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      # ----------------------------------------
-      # 9. Optional Debug Build (Ensures Build Works)
-      # ----------------------------------------
-      - name: 🧪 Flutter Build iOS (Debug, No Codesign)
-        run: flutter build ios --debug --no-codesign
+    # -------------------------------------------------
+    # 9. Build Flutter iOS (No Codesign For Sanity Check)
+    # -------------------------------------------------
+    - name: 🧪 Flutter iOS Debug Build (Validation Only)
+      run: flutter build ios --debug --no-codesign
 
-      # ----------------------------------------
-      # 10. Install xcpretty for better logs
-      # ----------------------------------------
-      - name: 📦 Install xcpretty (Better Xcode Logs)
-        run: |
-          gem install xcpretty --no-document || true
-          xcpretty --version || true
+    # -------------------------------------------------
+    # 10. Install xcpretty (Better Xcode Output)
+    # -------------------------------------------------
+    - name: 📦 Install xcpretty
+      run: |
+        gem install xcpretty --no-document || true
 
-      # ----------------------------------------
-      # 11. Archive & Export IPA (Ad-Hoc)
-      # ----------------------------------------
-      - name: 📦 Archive & Export iOS (.ipa)
-        run: |
-          cd ios
-          mkdir -p build
+    # -------------------------------------------------
+    # 11. Archive & Export iOS IPA
+    # -------------------------------------------------
+    - name: 📦 Archive & Export iOS IPA
+      run: |
+        cd ios
+        mkdir -p build
 
-          echo "🧹 Cleaning previous builds..."
-          xcodebuild clean -workspace "$WORKSPACE" -scheme "$APP_SCHEME" -configuration "$CONFIGURATION"
+        echo "🧹 Cleaning previous build..."
+        xcodebuild clean -workspace "$WORKSPACE" -scheme "$APP_SCHEME" -configuration "$CONFIGURATION"
 
-          echo "📥 Copying ExportOptions.plist..."
-          cp ../pf_ios/ExportOptions.plist ExportOptions.plist || { echo "❌ ExportOptions.plist missing"; exit 1; }
+        cp ../pf_ios/ExportOptions.plist ExportOptions.plist
 
-          ARCHIVE_PATH="$PWD/build/${APP_SCHEME}.xcarchive"
+        ARCHIVE_PATH="$PWD/build/$APP_SCHEME.xcarchive"
 
-          echo "🚀 Archiving project..."
-          xcodebuild -workspace "$WORKSPACE" \
-            -scheme "$APP_SCHEME" \
-            -configuration "$CONFIGURATION" \
-            -sdk iphoneos \
-            -archivePath "$ARCHIVE_PATH" \
-            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            -allowProvisioningUpdates \
-            archive | xcpretty
+        echo "🚀 Building archive..."
+        xcodebuild -workspace "$WORKSPACE" \
+          -scheme "$APP_SCHEME" \
+          -configuration "$CONFIGURATION" \
+          -sdk iphoneos \
+          -archivePath "$ARCHIVE_PATH" \
+          DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+          CODE_SIGN_STYLE=Manual \
+          CODE_SIGN_IDENTITY="Apple Distribution" \
+          archive | xcpretty
 
-          echo "📤 Exporting .ipa file..."
-          xcodebuild -exportArchive \
-            -archivePath "$ARCHIVE_PATH" \
-            -exportPath "$PWD/build" \
-            -exportOptionsPlist ExportOptions.plist \
-            -allowProvisioningUpdates | tee export.log
+        echo "📤 Exporting IPA..."
+        xcodebuild -exportArchive \
+          -archivePath "$ARCHIVE_PATH" \
+          -exportPath "$PWD/build/export" \
+          -exportOptionsPlist ExportOptions.plist
 
-          ls -la build/*.ipa || echo "❌ IPA not generated!"
+        echo "✅ Generated IPA files:"
+        ls -la build/export/*.ipa
 
-          # cd ..
+    # -------------------------------------------------
+    # 12. Upload IPA to TestFlight (Fastlane Deliver)
+    # -------------------------------------------------
+    - name: 🚀 Upload IPA to TestFlight
+      run: |
+        echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
 
-      # ----------------------------------------
-      # 12. Upload to TestFlight via Fastlane
-      # ----------------------------------------
-      - name: Upload to TestFlight via Fastlane
-        run: |
-          echo "🔑 Generating Fastlane API key JSON..."
-      
-          echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
-      
-          # keep newlines and escape for JSON
-          KEY_CONTENT=$(awk '{printf "%s\\n", $0}' AuthKey.p8 | sed 's/"/\\"/g')
-      
-          cat > fastlane_api_key.json <<EOF
-          {
-            "key_id": "$APP_STORE_CONNECT_API_KEY_ID",
-            "issuer_id": "$APP_STORE_CONNECT_ISSUER_ID",
-            "key": "$KEY_CONTENT",
-            "in_house": false
-          }
-          EOF
-      
-          echo "✅ fastlane_api_key.json created"
-          cat fastlane_api_key.json | head -10
-      
-          echo "📤 Uploading to TestFlight..."
-          sudo gem install fastlane --no-document
-      
-          fastlane deliver \
-            --api_key_path fastlane_api_key.json \
-            --ipa ios/build/nvflutter_sdk_test_app.ipa \
-            --skip_screenshots \
-            --skip_metadata \
-            --force
+        KEY_CONTENT=$(awk '{printf "%s\\n", $0}' AuthKey.p8 | sed 's/"/\\"/g')
 
-            
-          cd ..
-      # ----------------------------------------
-      # 13. Upload Artifact
-      # ----------------------------------------
-      - name: 📁 Upload .ipa Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-ios-ipa
-          path: ios/build/*.ipa
+        cat > fastlane_api_key.json <<EOF
+        {
+          "key_id": "$APP_STORE_CONNECT_API_KEY_ID",
+          "issuer_id": "$APP_STORE_CONNECT_ISSUER_ID",
+          "key": "$KEY_CONTENT",
+          "in_house": false
+        }
+        EOF
+
+        sudo gem install fastlane -N
+
+        fastlane deliver \
+          --api_key_path fastlane_api_key.json \
+          --ipa ios/build/export/*.ipa \
+          --skip_screenshots \
+          --skip_metadata \
+          --run_precheck_before_submit false \
+          --force \
+          --verbose
+
+    # -------------------------------------------------
+    # 13. Upload Generated IPA as Artifact
+    # -------------------------------------------------
+    - name: 📁 Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-ios-ipa
+        path: ios/build/export/*.ipa
