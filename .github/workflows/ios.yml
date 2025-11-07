@@ -25,7 +25,7 @@ jobs:
       # App Store Connect API (set in GitHub Secrets)
       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
 
     steps:
       # ----------------------------------------
@@ -171,12 +171,16 @@ jobs:
       - name: ☁️ Upload to TestFlight using Fastlane Deliver
         run: |
           echo "🔑 Generating Fastlane API key JSON..."
-          echo "{
-            \"key_id\": \"${APP_STORE_CONNECT_API_KEY_ID}\",
-            \"issuer_id\": \"${APP_STORE_CONNECT_ISSUER_ID}\",
-            \"key\": \"${APP_STORE_CONNECT_API_KEY}\",
-            \"in_house\": false
-          }" > fastlane_api_key.json
+          echo "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > AuthKey.p8
+
+          cat <<EOF > fastlane_api_key.json
+          {
+            "key_id": "${APP_STORE_CONNECT_API_KEY_ID}",
+            "issuer_id": "${APP_STORE_CONNECT_ISSUER_ID}",
+            "key": "$(awk '{printf "%s\\n", $0}' AuthKey.p8)",
+            "in_house": false
+          }
+          EOF
 
           echo "📤 Uploading to TestFlight..."
           sudo gem install fastlane --no-document
@@ -188,8 +192,6 @@ jobs:
             --force
             
           cd ..
-
-
       # ----------------------------------------
       # 13. Upload Artifact
       # ----------------------------------------
