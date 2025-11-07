@@ -22,6 +22,11 @@ jobs:
       DEVELOPMENT_TEAM: 4JW4924F8P     # ⚠️ Update if needed
       KEYCHAIN_NAME: build.keychain
 
+      # App Store Connect API (set in GitHub Secrets)
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+
     steps:
       # ----------------------------------------
       # 1. Source Checkout
@@ -160,7 +165,30 @@ jobs:
           cd ..
 
       # ----------------------------------------
-      # 12. Upload Artifact
+      # 12. Upload to TestFlight via Fastlane
+      # ----------------------------------------
+      - name: ☁️ Upload to TestFlight using Fastlane Deliver
+        run: |
+          echo "🔑 Generating Fastlane API key JSON..."
+          echo "{
+            \"key_id\": \"${APP_STORE_CONNECT_API_KEY_ID}\",
+            \"issuer_id\": \"${APP_STORE_CONNECT_ISSUER_ID}\",
+            \"key\": \"${APP_STORE_CONNECT_API_KEY}\",
+            \"in_house\": false
+          }" > fastlane_api_key.json
+
+          echo "📤 Uploading to TestFlight..."
+          sudo gem install fastlane --no-document
+          fastlane deliver \
+            --api_key_path fastlane_api_key.json \
+            --ipa ios/build/Runner.ipa \
+            --skip_waiting_for_build_processing true \
+            --skip_screenshots \
+            --skip_metadata
+
+
+      # ----------------------------------------
+      # 13. Upload Artifact
       # ----------------------------------------
       - name: 📁 Upload .ipa Artifact
         uses: actions/upload-artifact@v4
