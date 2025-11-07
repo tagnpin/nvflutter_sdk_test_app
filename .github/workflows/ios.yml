@@ -163,11 +163,6 @@ jobs:
 
           ls -la build/*.ipa || echo "❌ IPA not generated!"
 
-          # Store dynamic IPA path (safe even if name changes)
-          IPA_PATH=$(find build -maxdepth 1 -name "*.ipa" | head -n 1)
-          echo "✅ Found IPA at: $IPA_PATH"
-          echo "IPA_PATH=$IPA_PATH" >> $GITHUB_ENV
-
           # cd ..
 
       # ----------------------------------------
@@ -187,11 +182,11 @@ jobs:
           sudo gem install fastlane --no-document
           fastlane deliver \
             --api_key_path fastlane_api_key.json \
-            --ipa "$IPA_PATH" \
+            --ipa ios/build/nvflutter_sdk_test_app.ipa \
             --skip_screenshots \
             --skip_metadata \
             --force
-
+            
           cd ..
 
 
