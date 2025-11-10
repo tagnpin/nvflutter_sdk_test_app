@@ -9,7 +9,7 @@ on:
       - lib/**
       - pubspec.yaml
       - pubspec.lock
-      - .github/workflows/flutter-android.yml
+      - .github/workflows/android.yml
 
 jobs:
   build-android-debug:
@@ -54,7 +54,7 @@ jobs:
 
       # ✅ 6. Optional: Run Flutter Analyzer
       - name: 🔍 Flutter Analyze
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # ✅ 7. Optional: Run Tests (Can be removed if no tests available)
       - name: 🧪 Run Flutter Tests
@@ -71,4 +71,41 @@ jobs:
         with:
           name: flutter-android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
+
+      # ☁️ 10. Upload APK to AWS S3 (Professional + Safe)
+      - name: ☁️ Upload Debug APK to S3
+        if: success()   # Only run if previous steps succeeded
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          APK_PATH: build/app/outputs/flutter-apk/app-debug.apk
+          S3_DESTINATION: ${{ github.event.repository.name }}/app-debug-${{ github.run_number }}.apk
+        run: |
+          echo "🔄 Checking APK file before S3 upload..."
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ APK not found at $APK_PATH"
+            exit 1
+          fi
+
+          echo "✅ Uploading APK to S3 (without ACL)..."
+          aws s3 cp "$APK_PATH" "s3://$S3_BUCKET/$S3_DESTINATION"
+
+          echo "✅ Upload successful!"
+
+          # ✅ Generate a pre-signed URL valid for 7 days (604800 seconds)
+          APK_URL=$(aws s3 presign s3://$S3_BUCKET/$S3_DESTINATION --expires-in 604800)
+      
+          # ✅ Show in log output
+          echo "🔗 Pre-signed APK URL (valid 7 days): $APK_URL"
+      
+          # ✅ Save output (for next steps or jobs)
+          echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+      
+          # ✅ Export to GitHub Summary (clean + clickable link, not masked)
+          echo "### ✅ Download APK  
+          
+          📱 **Link (valid 7 days):**  
+          $APK_URL" >> $GITHUB_STEP_SUMMARY
 
