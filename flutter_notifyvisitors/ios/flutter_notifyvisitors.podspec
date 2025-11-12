@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'flutter_notifyvisitors'
-  s.version          = '1.4.0'
+  s.version          = '1.4.1'
   s.summary          = 'NotifyVisitors Flutter SDK for marketing automation software that designed to help marketers take their campaigns to the next level.'
   s.description      = 'NotifyVisitors sdk to attribute and analyse user behaviour analytics like funnel, cohort, RFM also used to increase Mobile App engagement through push notification, in-app nudges.'
   s.source_files = 'Classes/**/*'
@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '12.0'
   s.static_framework = true
-  s.dependency 'notifyvisitors', '7.3.2'
-  s.dependency 'notifyvisitorsNudges', '0.0.1'
+  s.dependency 'notifyvisitors', '7.3.3'
+  s.dependency 'notifyvisitorsNudges', '0.0.3'
   s.public_header_files = 'Classes/**/*.h'
 
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }

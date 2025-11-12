@@ -60,7 +60,7 @@ public class NotifyvisitorsPlugin extends BroadcastReceiver implements FlutterPl
     private MethodChannel channel;
 
     private static final String TAG = "NotifyVisitors-Flutter";
-    private static final String PLUGIN_VERSION = "1.4.0";
+    private static final String PLUGIN_VERSION = "1.4.1";
 
     private Context flutterContext;
     private Activity mainActivity;
