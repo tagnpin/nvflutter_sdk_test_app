@@ -75,5 +75,7 @@
 	<string>515CBDE82C402BDD85E4DFCCFD8904F6</string>
 	<key>nvViewAutoRedirection</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
