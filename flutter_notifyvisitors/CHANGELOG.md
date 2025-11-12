@@ -1,5 +1,14 @@
 ## CHANGE LOG
 
+### Version 1.4.1 *(November 12, 2025)*
+-------------------------------------------
+- Android Updates:
+  - install/update logic optimized
+- iOS Updates:
+  - Native Display code optimised in nudge section
+- Minor bug fixes
+- Code optimisation and performance enhancement.
+
 ### Version 1.4.0 *(July 25, 2025)*
 -------------------------------------------
 - Android Updates:
@@ -188,3 +197,4 @@
 - Initial Release.
 - Supports NotifyVisitors Android SDK
 - Supports NotifyVisitors IOS SDK
+
