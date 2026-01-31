@@ -10,6 +10,7 @@ on:
       - pubspec.yaml
       - pubspec.lock
       - .github/workflows/android.yml
+      - flutter_notifyvisitors/**
 
 jobs:
   build-android-debug:
