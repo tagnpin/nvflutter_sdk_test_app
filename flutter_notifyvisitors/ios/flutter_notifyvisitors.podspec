@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'flutter_notifyvisitors'
-  s.version          = '1.4.1'
+  s.version          = '1.5.0'
   s.summary          = 'NotifyVisitors Flutter SDK for marketing automation software that designed to help marketers take their campaigns to the next level.'
   s.description      = 'NotifyVisitors sdk to attribute and analyse user behaviour analytics like funnel, cohort, RFM also used to increase Mobile App engagement through push notification, in-app nudges.'
   s.source_files = 'Classes/**/*'

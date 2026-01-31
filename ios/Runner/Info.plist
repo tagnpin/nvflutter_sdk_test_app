@@ -66,13 +66,13 @@
 	<key>nvAppGroupKey</key>
 	<string>group.com.notifyvisitors.nvflutter-sdk-test-app.notifyvisitors</string>
 	<key>nvBrandID</key>
-	<integer>8115</integer>
+	<integer>7577</integer>
 	<key>nvLogsLevel</key>
 	<string>verbose</string>
 	<key>nvPushCategory</key>
 	<string>nvpush</string>
 	<key>nvSecretKey</key>
-	<string>515CBDE82C402BDD85E4DFCCFD8904F6</string>
+	<string>DB52A5B00BB0D3BF426639A1B9FCF2F7</string>
 	<key>nvViewAutoRedirection</key>
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>

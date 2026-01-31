@@ -6,7 +6,7 @@
 #import "UserNotifications.h"
 #endif
 #define TAG @"[FLUTTER-NOTIFYVISITORS]:"
-#define PLUGIN_VERSION @"1.4.1"
+#define PLUGIN_VERSION @"1.5.0"
 #define SHOW @"show"
 #define SHOW_INAPP_MESSAGE @"showInAppMessage"
 #define NOTIFICATION_CENTER @"showNotifications"

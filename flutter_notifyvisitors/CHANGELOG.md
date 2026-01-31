@@ -1,6 +1,18 @@
 ## CHANGE LOG
 
-### Version 1.4.1 *(November 12, 2025)*
+### Version 1.5.0 *(January 31, 2026)*
+-------------------------------------------
+- Android Updates:
+  - Changed
+    - Migrated Events API to the latest backend APIs.
+    - Internal refactoring with no breaking changes to public interfaces.
+  - Fixed
+    - Resolved an issue where a white box was appearing during the push notification permission prompt.
+    - Applied a mitigation for a Play Store Referrer API issue occurring on a background thread, validation pending in production.
+- Minor bug fixes
+- Code optimisation and performance enhancement.
+
+### Version 1.4.1 *(November 13, 2025)*
 -------------------------------------------
 - Android Updates:
   - install/update logic optimized
