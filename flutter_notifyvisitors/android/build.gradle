@@ -52,7 +52,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation ('com.google.firebase:firebase-messaging')
-    implementation('com.notifyvisitors.notifyvisitors:notifyvisitors:v5.6.2')
+    implementation('com.notifyvisitors.notifyvisitors:notifyvisitors:v5.7.0.1')
     implementation("com.notifyvisitors.nudges:notifyvisitors-nudges:v0.0.8")
     implementation('androidx.localbroadcastmanager:localbroadcastmanager:1.1.0')
 }
